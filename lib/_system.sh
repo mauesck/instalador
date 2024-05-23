@@ -1,7 +1,3 @@
-#!/bin/bash
-# 
-# system management
-
 #######################################
 # creates user
 # Arguments:
@@ -9,14 +5,26 @@
 #######################################
 system_create_user() {
   print_banner
-  printf "${WHITE} 💻 Agora, vamos criar o usuário para a instancia...${GRAY_LIGHT}"
+  printf "${WHITE} 💻 Agora, vamos criar o usuário para a instância...${GRAY_LIGHT}"
   printf "\n\n"
+
+  # Solicita o nome do usuário
+  read -p "Digite o nome do usuário a ser criado: " user_name
+  # Solicita a senha do usuário
+  read -s -p "Digite a senha para o novo usuário: " user_password
+  printf "\n\n"
+
+  # Verifica se as variáveis foram definidas
+  if [[ -z "$user_name" || -z "$user_password" ]]; then
+    printf "${RED}Erro: Nome de usuário ou senha não fornecidos.${GRAY_LIGHT}\n"
+    return 1
+  fi
 
   sleep 2
 
   sudo su - root <<EOF
-  useradd -m -p $(openssl passwd -crypt ${mysql_root_password}) -s /bin/bash -G sudo deploy
-  usermod -aG sudo deploy
+  useradd -m -p $(openssl passwd -crypt ${user_password}) -s /bin/bash -G sudo ${user_name}
+  usermod -aG sudo ${user_name}
 EOF
 
   sleep 2
